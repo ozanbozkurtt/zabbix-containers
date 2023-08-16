@@ -1,0 +1,34 @@
+version: '3'
+services:
+    zabbix-node-agent:
+      image: zabbix/zabbix-agent:latest #for node evironment
+      container_name: zabbix-node-agent
+      ports:
+        - 10050:10050
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - /etc/timezone:/etc/timezone:ro
+        - ./zbx_env/etc/zabbix/zabbix_agentd.d:/etc/zabbix/zabbix_agentd.d:ro
+        - ./zbx_env/var/lib/zabbix/modules:/var/lib/zabbix/modules:ro
+        - ./zbx_env/var/lib/zabbix/enc:/var/lib/zabbix/enc:ro
+        - ./zbx_env/var/lib/zabbix/ssh_keys:/var/lib/zabbix/ssh_keys:ro
+      environment:
+        - ZBX_HOSTNAME=yourserverhostname # not zabbix-server, agent server hostname
+        - ZBX_ACTIVE_ALLOW=true
+        - ZBX_SERVER_ACTIVE=10.10.10.20 # your zabbix server host ip address if there is more than one server use comma to seperate
+        - ZBX_SERVER_HOST=10.10.10.20 # your zabbix server host ip address if there is more than one server use comma to seperate
+      
+    zabbix-agent:
+      image: zabbix/zabbix-agent2:latest #for docker environment
+      container_name: zabbix-agent
+      ports:
+        - 10052:10050 # use any port
+      environment:
+        - ZBX_HOSTNAME=yourserverhostname # not zabbix-server, agent server hostname
+        - ZBX_SERVER_ACTIVE=10.10.10.20 # your zabbix server host ip address if there is more than one server use comma to seperate
+        - ZBX_SERVER_HOST=10.10.10.20 # your zabbix server host ip address if there is more than one server use comma to seperate        
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - /etc/timezone:/etc/timezone:ro
+        - /var/run/docker.sock:/var/run/docker.sock
+      user: 0:0
